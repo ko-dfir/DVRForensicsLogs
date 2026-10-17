@@ -101,7 +101,7 @@ Raw / E01 evidence
 
 ## 5. Verification
 
-The automated suite currently contains 147 tests. Real-image validation uses
+The automated suite currently contains 148 tests. Real-image validation uses
 a controlled set of evidence images; diagnostic outputs are
 written only to temporary directories and the evidence is opened read-only.
 

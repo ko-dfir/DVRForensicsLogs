@@ -20,6 +20,27 @@ def test_dropdown_and_calendar_popups_have_theme_specific_colors():
     assert "QMenu::item:selected { color: #171a21; }" in light
 
 
+def test_dropdown_and_spinbox_arrows_have_images_in_both_themes():
+    from pathlib import Path
+    build = (Path(ui.__file__).parent / "build.bat").read_text(encoding="utf-8")
+    for theme in ("dark", "light"):
+        sheet = ui.application_stylesheet(theme, "Segoe UI", 13)
+        for subcontrol in ("QComboBox::down-arrow", "QSpinBox::up-arrow",
+                           "QSpinBox::up-button", "QSpinBox::down-button",
+                           "QScrollBar:horizontal", "QScrollBar::add-page"):
+            assert subcontrol in sheet, (theme, subcontrol)
+        for direction in ("up", "down"):
+            icon = ui.resource_path("assets", f"arrow-{direction}-{theme}.svg")
+            assert icon.is_file()
+            assert icon.as_posix() in sheet
+            assert f"assets\\arrow-{direction}-{theme}.svg" in build  # bundled in the exe
+        assert "QCheckBox::indicator:checked" in sheet
+        assert "QCheckBox::indicator:disabled" in sheet
+        assert ui.resource_path("assets", "check.svg").as_posix() in sheet
+        assert "image: none" not in sheet  # disabled controls keep their arrows
+    assert "assets\\check.svg" in build
+
+
 def test_clear_recent_requires_confirmation_and_refreshes_sidebar(monkeypatch):
     application = QApplication.instance() or QApplication([])
     monkeypatch.setattr(ui.recents, "recent", lambda limit: [])

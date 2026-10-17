@@ -117,6 +117,11 @@ echo [INFO] Building Windows executable with Nuitka...
     --output-filename=CCTVLogAnalyzer.exe ^
     --include-data-files="%~dp0version.json"=version.json ^
     --include-data-files="%~dp0assets\cctv-log-analyzer.ico"=assets/cctv-log-analyzer.ico ^
+    --include-data-files="%~dp0assets\arrow-down-dark.svg"=assets/arrow-down-dark.svg ^
+    --include-data-files="%~dp0assets\arrow-up-dark.svg"=assets/arrow-up-dark.svg ^
+    --include-data-files="%~dp0assets\arrow-down-light.svg"=assets/arrow-down-light.svg ^
+    --include-data-files="%~dp0assets\arrow-up-light.svg"=assets/arrow-up-light.svg ^
+    --include-data-files="%~dp0assets\check.svg"=assets/check.svg ^
     --include-data-files="%~dp0scripts\hikvision_log_types.json"=scripts/hikvision_log_types.json ^
     "%~dp0cctv_log_analyzer.py"
 

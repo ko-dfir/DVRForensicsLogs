@@ -100,6 +100,32 @@ QComboBox::drop-down, QDateEdit::drop-down {
     background: #272d39; border-left: 1px solid #465168;
     width: 25px; border-top-right-radius: 6px; border-bottom-right-radius: 6px;
 }
+QSpinBox { padding-right: 30px; }
+QSpinBox::up-button, QSpinBox::down-button {
+    subcontrol-origin: border; width: 24px;
+    background: #272d39; border-left: 1px solid #465168;
+}
+QSpinBox::up-button { subcontrol-position: top right; border-top-right-radius: 6px; }
+QSpinBox::down-button {
+    subcontrol-position: bottom right; border-bottom-right-radius: 6px;
+    border-top: 1px solid #465168;
+}
+QSpinBox::up-button:hover, QSpinBox::down-button:hover,
+QComboBox::drop-down:hover, QDateEdit::drop-down:hover { background: #303746; }
+QSpinBox::up-button:pressed, QSpinBox::down-button:pressed { background: #202631; }
+QCheckBox { spacing: 7px; }
+QCheckBox::indicator, QListView::indicator {
+    width: 15px; height: 15px; border: 1px solid #465168; border-radius: 4px;
+    background: #1f242e;
+}
+QCheckBox::indicator:hover, QListView::indicator:hover { border-color: #5b8def; }
+QCheckBox::indicator:checked, QListView::indicator:checked {
+    background: #5b8def; border-color: #5b8def;
+}
+QCheckBox::indicator:disabled, QListView::indicator:disabled {
+    background: #1b1f27; border-color: #343c4b;
+}
+QCheckBox::indicator:checked:disabled { background: #465168; border-color: #465168; }
 QCalendarWidget { background: #171b23; color: #e6e9f0; }
 QCalendarWidget QWidget#qt_calendar_navigationbar { background: #1f242e; }
 QCalendarWidget QToolButton, QCalendarWidget QSpinBox {
@@ -150,8 +176,14 @@ QTextEdit, QPlainTextEdit {
     background: #0d1015; color: #a8d8b9; border: none;
     font-family: "Cascadia Mono", Consolas, monospace; padding: 10px;
 }
-QScrollBar:vertical { background: #141820; width: 11px; }
-QScrollBar::handle:vertical { background: #343c4b; border-radius: 5px; min-height: 28px; }
+QScrollBar:vertical { background: #141820; width: 11px; margin: 0; border: none; }
+QScrollBar:horizontal { background: #141820; height: 11px; margin: 0; border: none; }
+QScrollBar::handle:vertical { background: #343c4b; border-radius: 5px; min-height: 28px; margin: 1px; }
+QScrollBar::handle:horizontal { background: #343c4b; border-radius: 5px; min-width: 28px; margin: 1px; }
+QScrollBar::handle:hover { background: #465168; }
+QScrollBar::add-line, QScrollBar::sub-line { width: 0; height: 0; border: none; background: none; }
+QScrollBar::add-page, QScrollBar::sub-page { background: none; }
+QAbstractScrollArea::corner { background: #141820; border: none; }
 QStatusBar { background: #171b23; color: #8b94a8; }
 QListWidget { background: transparent; border: none; outline: none; }
 QListWidget::item { padding: 9px 7px; border-radius: 6px; }
@@ -191,7 +223,26 @@ QComboBox QAbstractItemView, QCalendarWidget QAbstractItemView, QMenu {
 }
 QMenu::item:selected { color: #171a21; }
 """
-    return sheet
+    return sheet + arrow_stylesheet(theme)
+
+
+def arrow_stylesheet(theme):
+    """Arrow icons for drop-downs and spin boxes, coloured for the theme.
+
+    A styled drop-down or spin button no longer draws Qt's native arrow, so
+    explicit images are required for the controls to remain usable.
+    """
+    def icon(direction):
+        return resource_path("assets", f"arrow-{direction}-{theme}.svg").as_posix()
+    return f"""
+QComboBox::down-arrow, QDateEdit::down-arrow, QSpinBox::down-arrow {{
+    image: url("{icon('down')}"); width: 12px; height: 12px;
+}}
+QSpinBox::up-arrow {{ image: url("{icon('up')}"); width: 12px; height: 12px; }}
+QCheckBox::indicator:checked, QListView::indicator:checked {{
+    image: url("{resource_path('assets', 'check.svg').as_posix()}");
+}}
+"""
 
 class ExtractionThread(QThread):
     log_signal = Signal(str)
@@ -570,11 +621,13 @@ class CCTVLogAnalyzerWindow(QMainWindow):
         
         filter_layout = QHBoxLayout()
         self.table_selector = QComboBox()
-        self.table_selector.setMinimumWidth(170)
+        self.table_selector.setMinimumWidth(150)
         self.table_selector.setToolTip("Select an extracted dataset/table")
         self.table_selector.currentTextChanged.connect(self.table_changed)
         self.filter_text = QLineEdit()
-        self.filter_text.setPlaceholderText("Global search across all columns...")
+        self.filter_text.setPlaceholderText("Search all columns…")
+        self.filter_text.setToolTip("Global search across all columns")
+        self.filter_text.setMinimumWidth(180)
         self.filter_text.returnPressed.connect(self.reset_and_populate)
         self.category_selector = QComboBox()
         self.category_selector.setMinimumWidth(150)
@@ -588,9 +641,11 @@ class CCTVLogAnalyzerWindow(QMainWindow):
         btn_clear = QPushButton("Clear")
         btn_clear.clicked.connect(self.clear_filters)
         
-        btn_export_csv = QPushButton("Export to Excel/CSV")
+        btn_export_csv = QPushButton("Export CSV")
+        btn_export_csv.setToolTip("Export the filtered records to a CSV file (opens in Excel)")
         btn_export_csv.clicked.connect(self.action_export_csv)
-        btn_export_html = QPushButton("Export to HTML")
+        btn_export_html = QPushButton("Export HTML")
+        btn_export_html.setToolTip("Export the filtered records to a multi-page HTML report")
         btn_export_html.clicked.connect(self.action_export_html)
         
         filter_layout.addWidget(QLabel("Dataset:"))

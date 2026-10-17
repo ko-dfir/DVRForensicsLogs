@@ -17,6 +17,11 @@
   over the neighbouring column.
 - Tooltips have explicit colours in both themes, so they stay readable with the
   Windows light theme; long tooltips are shortened.
+- Drop-down and spin-box arrows are drawn in both themes (they were missing or
+  rendered as broken button fragments), including on disabled controls;
+  checkboxes have a visible box in every state; scrollbars no longer show a
+  checkered track; and the search box keeps a usable width at the default
+  window size.
 - New System theme (the default) follows the Windows light/dark app setting and
   switches live when it changes; Dark and Light remain available.
 - Licensed under GPL-3.0.
