@@ -1,0 +1,4 @@
+-r requirements.txt
+-r requirements-runtime-snapshot.txt
+# Reproducible baseline; compiled startup still requires validation by the builder.
+nuitka==4.2.2

@@ -1,0 +1,56 @@
+# Python environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Generated builds, logs and archives
+/build/
+/dist/
+/installer-output/
+/build-logs/
+/packages/
+*.log
+*.zip
+*.7z
+*.whl
+*.egg-info/
+
+# Case evidence and derived results must never enter source control
+/output/
+/cases/
+**/workspaces/
+case.json
+workspace.json
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+*.E[0-9][0-9]
+*.e[0-9][0-9]
+*.Ex[0-9][0-9]
+*.ex[0-9][0-9]
+*.img
+*.dd
+*.raw
+*.bin
+*.001
+*.002
+/tests/New folder/
+
+# Local research notes and scratch scripts
+/scratchpad/
+
+# Credentials/editor-specific state
+.env
+.env.*
+!.env.example
+.idea/
+.vscode/
+Thumbs.db
+Desktop.ini

@@ -1,0 +1,3 @@
+PySide6==6.11.2
+dissect.xfs==3.13
+libewf-python==20240506
