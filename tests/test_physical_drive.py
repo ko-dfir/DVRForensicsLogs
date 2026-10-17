@@ -52,6 +52,25 @@ def test_admin_check_is_false_off_windows(monkeypatch):
     assert physical_drive.is_running_as_admin() is False
 
 
+def test_powershell_queries_never_open_a_console_window(monkeypatch):
+    monkeypatch.setattr(physical_drive, "os", SimpleNamespace(name="nt"))
+    calls = []
+
+    def fake_run(args, **kwargs):
+        calls.append((args, kwargs))
+        return SimpleNamespace(stdout="[]")
+
+    monkeypatch.setattr(physical_drive.subprocess, "run", fake_run)
+    monkeypatch.setattr(physical_drive.subprocess, "CREATE_NO_WINDOW", 0x08000000, raising=False)
+    physical_drive.list_physical_drives()
+    physical_drive.drive_volume_letters(r"\\.\PhysicalDrive1")
+    assert len(calls) == 2
+    for args, kwargs in calls:
+        assert args[0] == "powershell.exe"
+        assert kwargs["creationflags"] == 0x08000000
+        assert kwargs["capture_output"] is True
+
+
 def test_disk_volume_letters(monkeypatch):
     monkeypatch.setattr(physical_drive, "os", SimpleNamespace(name="nt"))
     monkeypatch.setattr(physical_drive.subprocess, "run",

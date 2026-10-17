@@ -76,6 +76,20 @@ class PhysicalDrive:
         return f"{self.path} — {self.model} — {size_gib:.1f} GiB — S/N {self.serial or 'N/A'}"
 
 
+def _run_powershell(command: str) -> str:
+    """Run a read-only PowerShell query and return its trimmed output.
+
+    CREATE_NO_WINDOW keeps PowerShell from opening a console window, which
+    would otherwise flash on screen from the windowed (console-less) app.
+    """
+    result = subprocess.run(
+        ["powershell.exe", "-NoProfile", "-NonInteractive", "-Command", command],
+        capture_output=True, text=True, timeout=20, check=True,
+        creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
+    )
+    return result.stdout.strip()
+
+
 def list_physical_drives() -> list[PhysicalDrive]:
     """Query Windows disk inventory; no disk contents are read or modified."""
     if os.name != "nt":
@@ -84,11 +98,7 @@ def list_physical_drives() -> list[PhysicalDrive]:
         "Get-CimInstance Win32_DiskDrive | "
         "Select-Object Index,Model,SerialNumber,Size,DeviceID | ConvertTo-Json -Compress"
     )
-    result = subprocess.run(
-        ["powershell.exe", "-NoProfile", "-NonInteractive", "-Command", command],
-        capture_output=True, text=True, timeout=20, check=True,
-    )
-    payload = result.stdout.strip()
+    payload = _run_powershell(command)
     if not payload:
         return []
     entries = json.loads(payload)
@@ -115,11 +125,7 @@ def drive_volume_letters(path: str) -> set[str]:
     command = (f"Get-Partition -DiskNumber {int(match[1])} | "
                "Where-Object DriveLetter | Select-Object -ExpandProperty DriveLetter | "
                "ConvertTo-Json -Compress")
-    result = subprocess.run(
-        ["powershell.exe", "-NoProfile", "-NonInteractive", "-Command", command],
-        capture_output=True, text=True, timeout=20, check=True,
-    )
-    payload = result.stdout.strip()
+    payload = _run_powershell(command)
     if not payload:
         return set()
     letters = json.loads(payload)

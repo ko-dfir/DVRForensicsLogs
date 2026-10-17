@@ -20,7 +20,7 @@ Last validated: 2026-10-15
 - Physical Drive checks for Administrator rights before reading and offers
   "Restart as Administrator" through the Windows UAC prompt; a header badge shows
   when the app is elevated.
-- Validation: 148 regression tests pass. The console and windowed executables
+- Validation: 149 regression tests pass. The console and windowed executables
   start and open the main window, and the installer builds. See
   `docs/BUILD_NOTES.md`.
 
@@ -177,7 +177,7 @@ damaged records have no recoverable timestamp.
 
 ## Automated Verification
 
-- 148 unit/regression tests pass under headless Qt (2026-10-15 update), including
+- 149 unit/regression tests pass under headless Qt (2026-10-15 update), including
   live worker cancellation and rendering all three investigation tabs in both themes.
 - Real-image end-to-end SQLite creation passed integrity checks for all three
   vendors.

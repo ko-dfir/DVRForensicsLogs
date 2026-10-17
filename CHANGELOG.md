@@ -8,7 +8,8 @@
 - The installer asks whether to install for the current user only (no
   Administrator rights) or for all users (Program Files).
 - Physical Drive checks for Administrator rights and offers Restart as
-  Administrator; a header badge shows when the app is elevated.
+  Administrator; a header badge shows when the app is elevated. Listing drives
+  no longer flashes a PowerShell console window.
 - Fixed result rows growing taller than the window for very long values (e.g.
   Dahua configuration explanations): result rows now show a short summary
   (about 150 characters), capped at three lines; the full text is shown in the
